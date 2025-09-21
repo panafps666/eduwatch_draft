@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EduWatch</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="icon" href="EduWatch Logo.png" type="image/png">
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html">
+                    <img src="EduWatch Logo.png" alt="EduWatch Logo">
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="admin.html">Admin</a>
+                <a href="About.html">About Us</a>
+                <a href="FAQ.html">FAQ</a>
+                <a href="profile.html">Profile</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="dashboard-container">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <div class="attendance-table-card">
+            <h2 class="card-title">All Faculty Attendance</h2>
+            <div class="table-container">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Faculty Name</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Time In</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-attendance-table-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+
+</body>
+
+</html>

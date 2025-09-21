@@ -1,0 +1,186 @@
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    max-width: 500px;
+    margin: 50px auto;
+}
+
+.profile-card {
+    background-color: rgba(68, 12, 12, 0.3);
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-photo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.profile-photo-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 2px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.profile-photo-placeholder p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Ensures the image covers the area without distortion */
+}
+
+#full-name {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.profile-username {
+    font-size: 1rem;
+    color: #a7a7a7;
+    margin-top: 5px;
+}
+
+.last-login-text {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin: 10px 0 20px 0;
+}
+
+.profile-details {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    position: relative;
+}
+
+.detail-item label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.editable-input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 5px 0;
+    font-size: 1rem;
+    transition: all 0.3s;
+    width: 100%;
+    /* Ensure input takes full width */
+}
+
+.editable-input:focus {
+    outline: none;
+    border-bottom: 1px solid white;
+}
+
+/* Styles for password toggle */
+.password-container {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(20%);
+    cursor: pointer;
+    color: #a7a7a7;
+    transition: color 0.3s;
+}
+
+.password-toggle:hover {
+    color: white;
+}
+
+/* Styles for editable mode */
+.profile-card.edit-mode .editable-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #a7a7a7;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.button-group {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.action-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.edit-btn {
+    background-color: white;
+    color: #5e1414;
+}
+
+.edit-btn:hover {
+    background-color: #cccccc;
+}
+
+.save-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.save-btn:hover {
+    background-color: #45a049;
+}
+
+.logout-btn {
+    background-color: rgba(68, 12, 12, 0.1);
+    color: white;
+}
+
+.logout-btn:hover {
+    background-color: #da190b;
+}
+
+.status-message {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    width: 100%;
+}

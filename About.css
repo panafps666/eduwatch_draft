@@ -1,0 +1,204 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 10px;
+    background-color: #5e1414;
+    color: white;
+    box-sizing: border-box;
+}
+
+/* Header and Navigation */
+header {
+    width: 100%;
+    padding: 30px 200px;
+    box-sizing: border-box;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 60px;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #a7a7a7;
+
+}
+
+/* Main Content Section - for main landing page */
+.content-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 0px;
+    height: calc(100vh - 80px);
+    box-sizing: border-box;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.main-text {
+    flex: 2;
+    max-width: 800px;
+}
+
+.main-text h1 {
+    font-size: 5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.main-text p {
+    font-size: 1.3rem;
+    line-height: 1.5;
+    margin-top: 15px;
+    max-width: 550px;
+}
+
+.get-started-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #5e1414;
+    background-color: white;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.get-started-btn:hover {
+    background-color: #f0f0f0;
+    color: #240b0b;
+}
+
+.main-logo {
+    flex: 1;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+
+.main-logo img {
+    height: 450px;
+}
+
+/* --- ABOUT US PAGE STYLES --- */
+
+.about-us-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 0 10px;
+    text-align: center;
+}
+
+.about-section {
+    margin-bottom: 40px;
+}
+
+.about-section h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    padding-top: 3%;
+}
+
+.about-section p {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    text-align: justify;
+    text-indent: 10%;
+}
+
+.developers-section {
+    margin-top: 80px;
+}
+
+.profiles-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 80px;
+    margin-top: 30px;
+}
+
+.profile-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 200px;
+    text-align: center;
+    color: #5e1414;
+}
+
+.profile-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    /* Ensures the image covers the area without distortion */
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1.8px solid #5e1414;
+    /* Match the border from your original placeholder */
+}
+
+.profile-card h3 {
+    font-size: 1.2rem;
+    margin: 0 0 5px 0;
+}
+
+.profile-card p {
+    font-size: 1rem;
+    margin: 5px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-section {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 60px;
+    }
+
+    nav {
+        flex-direction: column;
+    }
+
+    .nav-links {
+        margin-top: 20px;
+    }
+
+    .nav-links a {
+        margin: 0 10px;
+    }
+
+    .main-text {
+        max-width: 100%;
+        margin-bottom: 40px;
+    }
+
+    .main-logo img {
+        height: 250px;
+    }
+
+    .profiles-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-card {
+        width: 80%;
+    }
+}

@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 10px;
+    background-color: #5e1414;
+    color: white;
+    box-sizing: border-box;
+}
+
+/* Header and Navigation */
+header {
+    width: 100%;
+    padding: 30px 200px;
+    box-sizing: border-box;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo img {
+    height: 50px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 60px;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #a7a7a7;
+
+}
+
+/* Main Content Section */
+.content-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 0px;
+
+    height: calc(100vh - 80px);
+    /* Adjust based on header height */
+    box-sizing: border-box;
+    max-width: 1200px;
+    /* Limits the width for better readability on large screens */
+    margin: auto;
+    /* Centers the content section */
+}
+
+.main-text {
+    flex: 2;
+    /* Increased flexibility to take up more space for better balance */
+    max-width: 800px;
+}
+
+.main-text h1 {
+    font-size: 5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.main-text p {
+    font-size: 1.3rem;
+    line-height: 1.5;
+    margin-top: 15px;
+    max-width: 550px;
+}
+
+.get-started-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #5e1414;
+    background-color: white;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.get-started-btn:hover {
+    background-color: #f0f0f0;
+    color: #240b0b;
+}
+
+.main-logo {
+    flex: 1;
+    /* Decreased flexibility to take up less space */
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+
+.main-logo img {
+    height: 450px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-section {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 60px;
+    }
+
+    nav {
+        flex-direction: column;
+    }
+
+    .nav-links {
+        margin-top: 20px;
+    }
+
+    .nav-links a {
+        margin: 0 10px;
+    }
+
+    .main-text {
+        max-width: 100%;
+        margin-bottom: 40px;
+    }
+
+    .main-logo img {
+        height: 250px;
+    }
+}

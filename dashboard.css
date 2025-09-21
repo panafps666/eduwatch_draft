@@ -1,0 +1,135 @@
+.dashboard-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 1rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Simplified to 2 columns */
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.summary-card {
+    background-color: rgba(68, 12, 12, 0.3);
+    border-radius: 0.75rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.attendance-form-card {
+    background-color: rgba(68, 12, 12, 0.3);
+    border-radius: 0.75rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+}
+
+.attendance-table-card {
+    grid-column: span 2;
+    /* Spans both columns for a wider table */
+    background-color: rgba(68, 12, 12, 0.3);
+    border-radius: 0.75rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .attendance-table-card {
+        grid-column: span 1;
+    }
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.card-metric {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+}
+
+.current-date {
+    font-size: 1rem;
+    color: #a7a7a7;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: white;
+    color: #5e1414;
+    font-weight: bold;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #ccc;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 0.75rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.attendance-table th {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #a7a7a7;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.attendance-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
