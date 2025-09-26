@@ -40,11 +40,9 @@
                 <p class="current-date" id="current-date"></p>
                 <form id="attendance-form">
                     <div class="form-group">
-                        <label for="status-select">Select Status</label>
-                        <select id="status-select" name="status" required>
-                            <option value="">--Select Status--</option>
-                            <option value="Full-Time">Full-Time</option>
-                            <option value="Part-Time">Part-Time</option>
+                        <label for="subject-select">Select Subject</label>
+                        <select id="subject-select" name="subject" required>
+                            <option value=""></option>
                         </select>
                     </div>
                     <button type="submit" class="submit-btn">Mark as Present</button>
@@ -57,8 +55,8 @@
                         <thead>
                             <tr>
                                 <th>Faculty Name</th>
-                                <th>Department</th>
                                 <th>Status</th>
+                                <th>Subject</th>
                                 <th>Time In</th>
                             </tr>
                         </thead>
