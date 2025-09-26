@@ -4,11 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Profile - EduWatch</title>
+    <title>Profile - EduWatch</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="profile.css">
     <link rel="icon" href="EduWatch Logo.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <body>
@@ -30,45 +29,84 @@
     </header>
 
     <main class="profile-container">
-        <div class="profile-card" id="profile-card">
-            <div class="profile-photo-section">
-                <div class="profile-photo-placeholder">
-                    <img class="profile-image" src="paul.jpg" alt="paul">
+        <div class="profile-card">
+            <h1 class="page-title">User Profile</h1>
+            
+            <div class="profile-section">
+                <div class="profile-avatar">
+                    <div class="avatar-placeholder">
+                        <span id="avatar-initials">UN</span>
+                    </div>
                 </div>
-                <h2 id="full-name" class="editable-field"></h2>
-                <p id="username" class="profile-username"></p>
-                <p class="last-login-text">Last Logged In: <span id="last-login-info"></span></p>
+                
+                <div class="profile-info">
+                    <div class="info-group">
+                        <label>Full Name:</label>
+                        <span id="profile-fullname">Loading...</span>
+                    </div>
+                    
+                    <div class="info-group">
+                        <label>Username:</label>
+                        <span id="profile-username">Loading...</span>
+                    </div>
+                    
+                    <div class="info-group">
+                        <label>Role:</label>
+                        <span id="profile-role">Loading...</span>
+                    </div>
+                    
+                    <div class="info-group">
+                        <label>Email:</label>
+                        <span id="profile-email">Not provided</span>
+                    </div>
+                    
+                    <div class="info-group">
+                        <label>Contact Number:</label>
+                        <span id="profile-contact">Not provided</span>
+                    </div>
+                    
+                    <div class="info-group">
+                        <label>Address:</label>
+                        <span id="profile-address">Not provided</span>
+                    </div>
+                    
+                    <div class="info-group">
+                        <label>Last Login:</label>
+                        <span id="profile-last-login">N/A</span>
+                    </div>
+                </div>
             </div>
-
-            <div class="profile-details">
-                <div class="detail-item">
-                    <label>Email Address</label>
-                    <input type="email" id="email" class="editable-input" readonly>
-                </div>
-                <div class="detail-item password-container">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" class="editable-input password-input" readonly>
-                    <span class="password-toggle" id="toggle-password">
-                        <i class="far fa-eye"></i>
-                    </span>
-                </div>
-                <div class="detail-item">
-                    <label>Contact Number</label>
-                    <input type="tel" id="contact" class="editable-input" readonly>
-                </div>
-                <div class="detail-item">
-                    <label>Address</label>
-                    <input type="text" id="address" class="editable-input" readonly>
-                </div>
+            
+            <div class="profile-actions">
+                <button id="edit-profile-btn" class="action-btn edit-btn">Edit Profile</button>
+                <button id="logout-btn" class="action-btn logout-btn">Logout</button>
             </div>
+        </div>
 
-            <div class="button-group">
-                <button id="edit-button" class="action-btn edit-btn">Edit Information</button>
-                <button id="save-button" class="action-btn save-btn" style="display: none;">Save Changes</button>
-                <button id="logout-button" class="action-btn logout-btn">Log Out</button>
+        <!-- Edit Profile Modal (hidden by default) -->
+        <div id="edit-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Edit Profile</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="edit-profile-form">
+                    <div class="form-group">
+                        <label for="edit-fullname">Full Name:</label>
+                        <input type="text" id="edit-fullname" name="fullname" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-username">Username:</label>
+                        <input type="text" id="edit-username" name="username" required>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </form>
             </div>
-
-            <p id="message-status" class="status-message"></p>
         </div>
     </main>
 

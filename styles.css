@@ -130,3 +130,30 @@ nav {
         height: 250px;
     }
 }
+
+/* Message Area Styles - Add this to your existing styles.css file */
+.message-area {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: bold;
+    z-index: 1001;
+    display: none;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.message-area.success {
+    background-color: #10b981;
+}
+
+.message-area.error {
+    background-color: #ef4444;
+}
+
+.message-area.info {
+    background-color: #3b82f6;
+}

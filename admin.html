@@ -7,6 +7,7 @@
     <title>Admin Dashboard - EduWatch</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="admin.css">
     <link rel="icon" href="EduWatch Logo.png" type="image/png">
 </head>
 
@@ -31,24 +32,161 @@
 
     <main class="dashboard-container">
         <h1 class="page-title">Admin Dashboard</h1>
-        <div class="attendance-table-card">
-            <h2 class="card-title">All Faculty Attendance</h2>
-            <div class="table-container">
-                <table class="attendance-table">
-                    <thead>
-                        <tr>
-                            <th>Faculty Name</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                            <th>Time In</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-attendance-table-body">
-                    </tbody>
-                </table>
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" id="attendance-tab">Attendance Records</button>
+            <button class="tab-btn" id="users-tab">Manage Users</button>
+            <button class="tab-btn" id="subjects-tab">Manage Subjects</button>
+        </div>
+
+        <!-- Attendance Records Tab -->
+        <div id="attendance-content" class="tab-content active">
+            <div class="admin-controls">
+                <input type="text" id="search-attendance-input" placeholder="Search by name, status, or subject...">
+                <button id="clear-records-btn" class="submit-btn">Clear All Records</button>
+            </div>
+
+            <div class="attendance-table-card">
+                <h2 class="card-title">All Faculty Attendance</h2>
+                <div class="table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Faculty Name</th>
+                                <th>Status</th>
+                                <th>Subject</th>
+                                <th>Time In</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-attendance-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management Tab -->
+        <div id="users-content" class="tab-content">
+            <div class="admin-controls">
+                <input type="text" id="search-users-input" placeholder="Search by name, username, or status...">
+            </div>
+
+            <div class="attendance-table-card">
+                <h2 class="card-title">All Users</h2>
+                <div class="table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects Management Tab -->
+        <div id="subjects-content" class="tab-content">
+            <div class="admin-controls">
+                <input type="text" id="search-subjects-input" placeholder="Search subjects...">
+                <button id="add-subject-btn" class="submit-btn">Add Subject</button>
+            </div>
+
+            <div class="attendance-table-card">
+                <h2 class="card-title">Subject Management</h2>
+                <div class="table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Subject Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subjects-table-body">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
+
+    <!-- Edit User Modal -->
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit User</h2>
+                <span class="close" id="close-edit-user">&times;</span>
+            </div>
+            <form id="edit-user-form">
+                <div class="form-group">
+                    <label for="edit-user-fullname">Full Name:</label>
+                    <input type="text" id="edit-user-fullname" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-email">Email:</label>
+                    <input type="email" id="edit-user-email">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-contact">Contact Number:</label>
+                    <input type="tel" id="edit-user-contact">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-address">Address:</label>
+                    <input type="text" id="edit-user-address">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-status">Status:</label>
+                    <select id="edit-user-status" required>
+                        <option value="Full Time">Full Time</option>
+                        <option value="Part Time">Part Time</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-subjects">Assigned Subjects:</label>
+                    <div id="user-subjects-container">
+                        <!-- Subject checkboxes will be populated here -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Subject Modal -->
+    <div id="add-subject-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Subject</h2>
+                <span class="close" id="close-add-subject">&times;</span>
+            </div>
+            <form id="add-subject-form">
+                <div class="form-group">
+                    <label for="subject-name">Subject Name:</label>
+                    <input type="text" id="subject-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject-description">Description:</label>
+                    <input type="text" id="subject-description">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Add Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="admin.js"></script>
 
