@@ -5,13 +5,413 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - EduWatch</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="dashboard.css">
-    <link rel="icon" href="EduWatch Logo.png" type="image/png">
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #5e1414, #8b1e1e);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #cccccc;
+        }
+
+        /* Dashboard CSS */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 1rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        /* Admin info banner */
+        .admin-info-banner {
+            background-color: rgba(68, 12, 12, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .admin-info-banner h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #ffeb3b;
+        }
+
+        .admin-info-banner p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        /* Admin-specific styles */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #a7a7a7;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: white;
+            border-bottom-color: white;
+        }
+
+        .tab-btn:hover {
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .admin-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .admin-controls input {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px;
+            border: 1px solid #a7a7a7;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .admin-controls input::placeholder {
+            color: #a7a7a7;
+        }
+
+        .admin-controls input:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        .attendance-table-card {
+            background-color: rgba(68, 12, 12, 0.3);
+            border-radius: 0.75rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .submit-btn {
+            padding: 12px 24px;
+            background-color: white;
+            color: #5e1414;
+            font-weight: bold;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .submit-btn:hover {
+            background-color: #ccc;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 0.75rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .attendance-table th {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #a7a7a7;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .attendance-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Button styles */
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-right: 5px;
+        }
+
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: rgba(68, 12, 12, 0.9);
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: white;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #a7a7a7;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        .subject-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .subject-checkbox input[type="checkbox"] {
+            width: auto;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .cancel-btn {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .save-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Message area styles */
+        .message-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 1001;
+            display: none;
+            max-width: 300px;
+        }
+
+        .message-area.success {
+            background-color: #4CAF50;
+        }
+
+        .message-area.error {
+            background-color: #f44336;
+        }
+
+        .message-area.info {
+            background-color: #2196F3;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .admin-controls input {
+                min-width: auto;
+            }
+
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+
+            .attendance-table th,
+            .attendance-table td {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
     <header>
         <nav>
             <div class="logo">
@@ -19,39 +419,663 @@
                     <img src="EduWatch Logo.png" alt="EduWatch Logo">
                 </a>
             </div>
-            <div class="nav-links">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="admin.html">Admin</a>
-                <a href="About.html">About Us</a>
-                <a href="FAQ.html">FAQ</a>
-                <a href="profile.html">Profile</a>
+            <div class="nav-links" id="nav-links">
+                <!-- Navigation will be populated by JavaScript -->
             </div>
         </nav>
     </header>
 
     <main class="dashboard-container">
         <h1 class="page-title">Admin Dashboard</h1>
-        <div class="attendance-table-card">
-            <h2 class="card-title">All Faculty Attendance</h2>
-            <div class="table-container">
-                <table class="attendance-table">
-                    <thead>
-                        <tr>
-                            <th>Faculty Name</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                            <th>Time In</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-attendance-table-body">
-                    </tbody>
-                </table>
+
+        <!-- Admin Information Banner -->
+        <div class="admin-info-banner">
+            <h3>Administrator Management Panel</h3>
+            <p>You are logged in as an administrator. Use this dashboard to manage users, subjects, and view attendance records.</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" id="attendance-tab">View Attendance Records</button>
+            <button class="tab-btn" id="users-tab">Manage Users</button>
+            <button class="tab-btn" id="subjects-tab">Manage Subjects</button>
+        </div>
+
+        <!-- Attendance Records Tab (View Only) -->
+        <div id="attendance-content" class="tab-content active">
+            <div class="admin-controls">
+                <input type="text" id="search-attendance-input" placeholder="Search by name, status, or subject...">
+                <button id="clear-records-btn" class="submit-btn">Clear All Records</button>
+            </div>
+
+            <div class="attendance-table-card">
+                <h2 class="card-title">All Faculty Attendance Records</h2>
+                <div class="table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Faculty Name</th>
+                                <th>Status</th>
+                                <th>Subject</th>
+                                <th>Time In</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-attendance-table-body">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #a7a7a7;">Loading attendance records...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Management Tab -->
+        <div id="users-content" class="tab-content">
+            <div class="admin-controls">
+                <input type="text" id="search-users-input" placeholder="Search by name, username, or status...">
+            </div>
+
+            <div class="attendance-table-card">
+                <h2 class="card-title">User Management</h2>
+                <div class="table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #a7a7a7;">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects Management Tab -->
+        <div id="subjects-content" class="tab-content">
+            <div class="admin-controls">
+                <input type="text" id="search-subjects-input" placeholder="Search subjects...">
+                <button id="add-subject-btn" class="submit-btn">Add Subject</button>
+            </div>
+
+            <div class="attendance-table-card">
+                <h2 class="card-title">Subject Management</h2>
+                <div class="table-container">
+                    <table class="attendance-table">
+                        <thead>
+                            <tr>
+                                <th>Subject Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subjects-table-body">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: #a7a7a7;">Loading subjects...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
 
-    <script src="admin.js"></script>
+    <!-- Edit User Modal -->
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit User</h2>
+                <span class="close" id="close-edit-user">&times;</span>
+            </div>
+            <form id="edit-user-form">
+                <div class="form-group">
+                    <label for="edit-user-fullname">Full Name:</label>
+                    <input type="text" id="edit-user-fullname" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-email">Email:</label>
+                    <input type="email" id="edit-user-email">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-contact">Contact Number:</label>
+                    <input type="tel" id="edit-user-contact">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-address">Address:</label>
+                    <input type="text" id="edit-user-address">
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-status">Status:</label>
+                    <select id="edit-user-status" required>
+                        <option value="Full Time">Full Time</option>
+                        <option value="Part Time">Part Time</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-user-subjects">Assigned Subjects:</label>
+                    <div id="user-subjects-container">
+                        <!-- Subject checkboxes will be populated here -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Add Subject Modal -->
+    <div id="add-subject-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Subject</h2>
+                <span class="close" id="close-add-subject">&times;</span>
+            </div>
+            <form id="add-subject-form">
+                <div class="form-group">
+                    <label for="subject-name">Subject Name:</label>
+                    <input type="text" id="subject-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject-description">Description:</label>
+                    <input type="text" id="subject-description">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="save-btn">Add Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Get user data from localStorage
+            const isLoggedIn = localStorage.getItem('userUsername');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const userFullName = localStorage.getItem('userFullName');
+
+            // CRITICAL: Admin-only navigation - NO Dashboard access
+            const navLinks = document.getElementById('nav-links');
+            navLinks.innerHTML = `
+                <a href="admin.html">Admin</a>
+                <a href="About.html">About Us</a>
+                <a href="FAQ.html">FAQ</a>
+                <a href="profile.html">Profile</a>
+            `;
+
+            // Element references
+            const adminAttendanceTableBody = document.getElementById('admin-attendance-table-body');
+            const usersTableBody = document.getElementById('users-table-body');
+            const subjectsTableBody = document.getElementById('subjects-table-body');
+            
+            // Search inputs
+            const searchAttendanceInput = document.getElementById('search-attendance-input');
+            const searchUsersInput = document.getElementById('search-users-input');
+            const searchSubjectsInput = document.getElementById('search-subjects-input');
+            
+            // Buttons
+            const clearRecordsBtn = document.getElementById('clear-records-btn');
+            const addSubjectBtn = document.getElementById('add-subject-btn');
+            
+            // Tab elements
+            const attendanceTab = document.getElementById('attendance-tab');
+            const usersTab = document.getElementById('users-tab');
+            const subjectsTab = document.getElementById('subjects-tab');
+            const attendanceContent = document.getElementById('attendance-content');
+            const usersContent = document.getElementById('users-content');
+            const subjectsContent = document.getElementById('subjects-content');
+            
+            // Modal elements
+            const editUserModal = document.getElementById('edit-user-modal');
+            const addSubjectModal = document.getElementById('add-subject-modal');
+            const closeEditUser = document.getElementById('close-edit-user');
+            const closeAddSubject = document.getElementById('close-add-subject');
+            const editUserForm = document.getElementById('edit-user-form');
+            const addSubjectForm = document.getElementById('add-subject-form');
+
+            // Data arrays
+            let allAttendanceRecords = [];
+            let allUsers = [];
+            let allSubjects = [];
+            let currentEditingUserId = null;
+
+            // Create a message area for better user feedback
+            const messageArea = document.createElement('div');
+            messageArea.className = 'message-area';
+            document.body.prepend(messageArea);
+
+            const displayMessage = (message, type = 'info') => {
+                messageArea.textContent = message;
+                messageArea.className = `message-area ${type}`;
+                messageArea.style.display = 'block';
+                setTimeout(() => {
+                    messageArea.style.display = 'none';
+                }, 5000);
+            };
+
+            // SECURITY CHECK: Redirect if not admin
+            if (!isLoggedIn || !isAdmin) {
+                displayMessage('Access denied. Admin privileges required.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
+                return;
+            }
+
+            // Tab switching functionality
+            const switchTab = (activeTab, activeContent) => {
+                document.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                activeTab.classList.add('active');
+                activeContent.classList.add('active');
+            };
+
+            attendanceTab.addEventListener('click', () => switchTab(attendanceTab, attendanceContent));
+            usersTab.addEventListener('click', () => {
+                switchTab(usersTab, usersContent);
+                loadAllUsers();
+            });
+            subjectsTab.addEventListener('click', () => {
+                switchTab(subjectsTab, subjectsContent);
+                loadAllSubjects();
+            });
+
+            // Render functions
+            const renderAttendanceTable = (records) => {
+                adminAttendanceTableBody.innerHTML = '';
+                if (records.length === 0) {
+                    const noRecordsRow = document.createElement('tr');
+                    noRecordsRow.innerHTML = `<td colspan="4" style="text-align: center; color: #a7a7a7;">No attendance records found.</td>`;
+                    adminAttendanceTableBody.appendChild(noRecordsRow);
+                    return;
+                }
+
+                records.forEach(record => {
+                    const newRow = document.createElement('tr');
+                    const timeIn = new Date(record.timestamp).toLocaleString('en-US');
+                    const userStatus = record.user_status || 'Unknown';
+                    const subject = record.subject || record.department || 'Not specified';
+                    
+                    newRow.innerHTML = `
+                        <td>${record.name}</td>
+                        <td>${userStatus}</td>
+                        <td>${subject}</td>
+                        <td>${timeIn}</td>
+                    `;
+                    adminAttendanceTableBody.appendChild(newRow);
+                });
+            };
+
+            const renderUsersTable = (users) => {
+                usersTableBody.innerHTML = '';
+                if (users.length === 0) {
+                    const noUsersRow = document.createElement('tr');
+                    noUsersRow.innerHTML = `<td colspan="6" style="text-align: center; color: #a7a7a7;">No users found.</td>`;
+                    usersTableBody.appendChild(noUsersRow);
+                    return;
+                }
+
+                users.forEach(user => {
+                    const newRow = document.createElement('tr');
+                    const role = user.is_admin ? 'Administrator' : 'Faculty';
+                    const status = user.status || 'Unknown';
+                    
+                    newRow.innerHTML = `
+                        <td>${user.full_name}</td>
+                        <td>${user.username}</td>
+                        <td>${user.email || 'Not provided'}</td>
+                        <td>${status}</td>
+                        <td>${role}</td>
+                        <td>
+                            <button onclick="editUser(${user.id})" class="edit-btn">Edit</button>
+                        </td>
+                    `;
+                    usersTableBody.appendChild(newRow);
+                });
+            };
+
+            const renderSubjectsTable = (subjects) => {
+                subjectsTableBody.innerHTML = '';
+                if (subjects.length === 0) {
+                    const noSubjectsRow = document.createElement('tr');
+                    noSubjectsRow.innerHTML = `<td colspan="3" style="text-align: center; color: #a7a7a7;">No subjects found.</td>`;
+                    subjectsTableBody.appendChild(noSubjectsRow);
+                    return;
+                }
+
+                subjects.forEach(subject => {
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${subject.name}</td>
+                        <td>${subject.description || 'No description'}</td>
+                        <td>
+                            <button onclick="deleteSubject(${subject.id})" class="delete-btn">Delete</button>
+                        </td>
+                    `;
+                    subjectsTableBody.appendChild(newRow);
+                });
+            };
+
+            // Load data functions
+            const loadAllAttendanceData = async () => {
+                try {
+                    const attendanceResponse = await fetch('http://127.0.0.1:5000/api/dashboard');
+                    if (!attendanceResponse.ok) {
+                        throw new Error('Failed to fetch attendance data');
+                    }
+                    const attendanceData = await attendanceResponse.json();
+                    allAttendanceRecords = attendanceData.attendance;
+                    renderAttendanceTable(allAttendanceRecords);
+                    displayMessage('Attendance records loaded for review', 'success');
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    displayMessage('Failed to load attendance data. Please try again.', 'error');
+                }
+            };
+
+            const loadAllUsers = async () => {
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/api/admin/users');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch users');
+                    }
+                    const data = await response.json();
+                    allUsers = data.users;
+                    renderUsersTable(allUsers);
+                } catch (error) {
+                    console.error('Error fetching users:', error);
+                    displayMessage('Failed to load users. Please try again.', 'error');
+                }
+            };
+
+            const loadAllSubjects = async () => {
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/api/subjects');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch subjects');
+                    }
+                    const data = await response.json();
+                    allSubjects = data.subjects;
+                    renderSubjectsTable(allSubjects);
+                } catch (error) {
+                    console.error('Error fetching subjects:', error);
+                    displayMessage('Failed to load subjects. Please try again.', 'error');
+                }
+            };
+
+            // Global functions for buttons
+            window.editUser = async (userId) => {
+                const user = allUsers.find(u => u.id === userId);
+                if (!user) return;
+
+                currentEditingUserId = userId;
+                document.getElementById('edit-user-fullname').value = user.full_name || '';
+                document.getElementById('edit-user-email').value = user.email || '';
+                document.getElementById('edit-user-contact').value = user.contact_number || '';
+                document.getElementById('edit-user-address').value = user.address || '';
+                document.getElementById('edit-user-status').value = user.status || 'Full Time';
+
+                await loadUserSubjects(userId);
+                editUserModal.style.display = 'block';
+            };
+
+            const loadUserSubjects = async (userId) => {
+                try {
+                    const allSubjectsResponse = await fetch('http://127.0.0.1:5000/api/subjects');
+                    const allSubjectsData = await allSubjectsResponse.json();
+                    
+                    const userSubjectsResponse = await fetch(`http://127.0.0.1:5000/api/admin/users/${userId}/subjects`);
+                    const userSubjectsData = await userSubjectsResponse.json();
+                    
+                    const assignedSubjectIds = userSubjectsData.subjects.map(s => s.id);
+                    
+                    const container = document.getElementById('user-subjects-container');
+                    container.innerHTML = '';
+                    
+                    allSubjectsData.subjects.forEach(subject => {
+                        const checkboxDiv = document.createElement('div');
+                        checkboxDiv.className = 'subject-checkbox';
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.id = `subject-${subject.id}`;
+                        checkbox.value = subject.id;
+                        checkbox.checked = assignedSubjectIds.includes(subject.id);
+                        
+                        const label = document.createElement('label');
+                        label.htmlFor = `subject-${subject.id}`;
+                        label.textContent = subject.name;
+                        
+                        checkboxDiv.appendChild(checkbox);
+                        checkboxDiv.appendChild(label);
+                        container.appendChild(checkboxDiv);
+                    });
+                    
+                } catch (error) {
+                    console.error('Error loading user subjects:', error);
+                    const container = document.getElementById('user-subjects-container');
+                    container.innerHTML = '<p style="color: #a7a7a7;">Unable to load subjects</p>';
+                }
+            };
+
+            window.deleteSubject = async (subjectId) => {
+                if (!window.confirm('Are you sure you want to delete this subject?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`http://127.0.0.1:5000/api/subjects/${subjectId}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        displayMessage('Subject deleted successfully!', 'success');
+                        await loadAllSubjects();
+                    } else {
+                        displayMessage('Failed to delete subject.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error deleting subject:', error);
+                    displayMessage('Error deleting subject. Please try again.', 'error');
+                }
+            };
+
+            // Search functionality
+            searchAttendanceInput.addEventListener('keyup', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredRecords = allAttendanceRecords.filter(record => {
+                    const userStatus = record.user_status || 'Unknown';
+                    const subject = record.subject || record.department || 'Not specified';
+                    
+                    return (
+                        record.name.toLowerCase().includes(searchTerm) ||
+                        userStatus.toLowerCase().includes(searchTerm) ||
+                        subject.toLowerCase().includes(searchTerm) ||
+                        (record.department && record.department.toLowerCase().includes(searchTerm))
+                    );
+                });
+                renderAttendanceTable(filteredRecords);
+            });
+
+            searchUsersInput.addEventListener('keyup', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredUsers = allUsers.filter(user => {
+                    return (
+                        user.full_name.toLowerCase().includes(searchTerm) ||
+                        user.username.toLowerCase().includes(searchTerm) ||
+                        (user.status || '').toLowerCase().includes(searchTerm) ||
+                        (user.email || '').toLowerCase().includes(searchTerm)
+                    );
+                });
+                renderUsersTable(filteredUsers);
+            });
+
+            searchSubjectsInput.addEventListener('keyup', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredSubjects = allSubjects.filter(subject => {
+                    return (
+                        subject.name.toLowerCase().includes(searchTerm) ||
+                        (subject.description || '').toLowerCase().includes(searchTerm)
+                    );
+                });
+                renderSubjectsTable(filteredSubjects);
+            });
+
+            // Form submissions
+            editUserForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentEditingUserId) return;
+
+                const formData = {
+                    full_name: document.getElementById('edit-user-fullname').value.trim(),
+                    email: document.getElementById('edit-user-email').value.trim(),
+                    contact_number: document.getElementById('edit-user-contact').value.trim(),
+                    address: document.getElementById('edit-user-address').value.trim(),
+                    status: document.getElementById('edit-user-status').value
+                };
+
+                const selectedSubjects = [];
+                document.querySelectorAll('#user-subjects-container input[type="checkbox"]:checked').forEach(checkbox => {
+                    selectedSubjects.push(parseInt(checkbox.value));
+                });
+
+                try {
+                    const userResponse = await fetch(`http://127.0.0.1:5000/api/admin/users/${currentEditingUserId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const userData = await userResponse.json();
+
+                    if (userData.success) {
+                        const subjectsResponse = await fetch(`http://127.0.0.1:5000/api/admin/users/${currentEditingUserId}/subjects`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ subject_ids: selectedSubjects })
+                        });
+
+                        const subjectsData = await subjectsResponse.json();
+
+                        if (subjectsData.success) {
+                            displayMessage('User and subjects updated successfully!', 'success');
+                            editUserModal.style.display = 'none';
+                            await loadAllUsers();
+                        } else {
+                            displayMessage('User updated but failed to update subjects: ' + subjectsData.message, 'error');
+                        }
+                    } else {
+                        displayMessage(userData.message || 'Failed to update user.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                    displayMessage('Error updating user. Please try again.', 'error');
+                }
+            });
+
+            addSubjectForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('subject-name').value.trim(),
+                    description: document.getElementById('subject-description').value.trim()
+                };
+
+                if (!formData.name) {
+                    displayMessage('Subject name is required.', 'error');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/api/subjects', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        displayMessage('Subject added successfully!', 'success');
+                        addSubjectModal.style.display = 'none';
+                        addSubjectForm.reset();
+                        await loadAllSubjects();
+                    } else {
+                        displayMessage(data.message || 'Failed to add subject.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error adding subject:', error);
+                    displayMessage('Error adding subject. Please try again.', 'error');
+                }
+            });
+
+            // Button event listeners
+            clearRecordsBtn.addEventListener('click', async () => {
+                const confirmed = window.confirm("Are you sure you want to clear ALL attendance records? This cannot be undone.");
+                if (confirmed) {
+                    try {
+                        const response = await fetch('http://127.0.0.1:5000/api/admin/clear_attendance', {
+                            method: 'DELETE'
+                        });
+                        if (!response.ok) {
+                            throw new Error('Failed to clear records');
+                        }
+                        allAttendanceRecords = [];
+                        renderAttendanceTable([]);
+                        displayMessage('All records have been cleared!', 'success');
+                    } catch (error) {
+                        console.error('Error clearing records:', error);
+                        displayMessage('Failed to clear records. Please try again.', 'error');
+                    }
+                }
+            });
+
+            addSubjectBtn.addEventListener('click', () => {
+                addSubjectModal.style.display = 'block';
+            });
+
+            // Modal event listeners
+            closeEditUser.addEventListener('click', () => {
+                editUserModal.style.display = 'none';
+            });
+
+            closeAddSubject.addEventListener('click', () => {
+                addSubjectModal.style.display = 'none';
+            });
+
+            document.querySelectorAll('.cancel-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    editUserModal.style.display = 'none';
+                    addSubjectModal.style.display = 'none';
+                });
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === editUserModal) {
+                    editUserModal.style.display = 'none';
+                }
+                if (e.target === addSubjectModal) {
+                    addSubjectModal.style.display = 'none';
+                }
+            });
+
+            // Initial data load
+            loadAllAttendanceData();
+        });
+    </script>
+    <script src="navigation.js"></script>
 </body>
 
 </html>

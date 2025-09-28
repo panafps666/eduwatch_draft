@@ -1,0 +1,15 @@
+{
+    "users": {
+        "outis": {
+            "password": "123123",
+            "full_name": "Nathaniel Saclolo",
+            "is_admin": false
+        },
+        "admin": {
+            "password": "admin123",
+            "full_name": "Nathaniel Saclolo",
+            "is_admin": true
+        }
+    },
+    "attendance_records": []
+}

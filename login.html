@@ -5,14 +5,322 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login / Create Account - EduWatch</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="login.css">
     <link rel="icon" href="EduWatch Logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #5e1414, #8b1e1e);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #cccccc;
+        }
+
+        /* Login container styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 20px;
+        }
+
+        .form-card {
+            background-color: rgba(68, 12, 12, 0.3);
+            padding: 40px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        /* Message area styles */
+        .message-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            display: none;
+            max-width: 350px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .message-area.success {
+            background-color: #4CAF50;
+            border-left: 4px solid #45a049;
+        }
+
+        .message-area.error {
+            background-color: #f44336;
+            border-left: 4px solid #da190b;
+        }
+
+        .message-area.info {
+            background-color: #2196F3;
+            border-left: 4px solid #1976D2;
+        }
+
+        /* Form toggle buttons */
+        .form-toggle-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-btn {
+            flex-grow: 1;
+            padding: 15px 10px;
+            border: none;
+            background-color: transparent;
+            color: #a7a7a7;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn.active {
+            border-bottom-color: white;
+            color: white;
+            font-weight: bold;
+        }
+
+        .toggle-btn:hover {
+            color: white;
+        }
+
+        /* Form styles */
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: white;
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background-color: #5e1414;
+            color: white;
+        }
+
+        /* Password container styles */
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-input {
+            width: 100%;
+            padding-right: 45px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 70%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            z-index: 10;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: white;
+        }
+
+        /* Submit button styles */
+        .submit-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: white;
+            color: #5e1414;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .form-card {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .message-area {
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+            }
+        }
+    </style>
 </head>
 
 <body>
-
     <header>
         <nav>
             <div class="logo">
@@ -40,61 +348,362 @@
                 <h2 class="form-title">Login</h2>
                 <div class="form-group">
                     <label for="login-username">Username</label>
-                    <input type="text" id="login-username" name="username" required>
+                    <input type="text" id="login-username" name="username" required placeholder="Enter your username">
                 </div>
                 <div class="form-group password-container">
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" required>
+                    <input type="password" id="login-password" name="password" class="password-input" required placeholder="Enter your password">
                     <span class="password-toggle" id="toggle-login-password">
                         <i class="far fa-eye"></i>
                     </span>
                 </div>
                 <button type="submit" class="submit-btn">Login</button>
+                <div class="loading" id="login-loading">
+                    <div class="spinner"></div>
+                    <span>Logging in...</span>
+                </div>
             </form>
 
             <form id="create-form" class="auth-form">
                 <h2 class="form-title">Create Account</h2>
+                
                 <div class="form-group">
                     <label for="create-fullname">Full Name</label>
-                    <input type="text" id="create-fullname" name="fullname" required>
+                    <input type="text" id="create-fullname" name="fullname" required placeholder="Enter your full name">
                 </div>
+                
                 <div class="form-group">
                     <label for="create-contact">Contact Number</label>
-                    <input type="tel" id="create-contact" name="contact" required>
+                    <input type="tel" id="create-contact" name="contact" required placeholder="Enter your contact number">
                 </div>
+                
+                <div class="form-group">
+                    <label for="create-email">Email</label>
+                    <input type="email" id="create-email" name="email" required placeholder="Enter your email address">
+                </div>
+                
                 <div class="form-group">
                     <label for="create-address">Address</label>
-                    <input type="text" id="create-address" name="address" required>
+                    <input type="text" id="create-address" name="address" required placeholder="Enter your address">
                 </div>
+                
                 <div class="form-group">
-                    <label for="create-email">Email Address</label>
-                    <input type="email" id="create-email" name="email" required>
+                    <label for="create-status">Status</label>
+                    <select id="create-status" name="status" required>
+                        <option value="">--Select Status--</option>
+                        <option value="Full Time">Full Time</option>
+                        <option value="Part Time">Part Time</option>
+                    </select>
                 </div>
+                
                 <div class="form-group">
                     <label for="create-username">Username</label>
-                    <input type="text" id="create-username" name="username" required>
+                    <input type="text" id="create-username" name="username" required placeholder="Choose a username">
                 </div>
+                
                 <div class="form-group password-container">
                     <label for="create-password">Password</label>
-                    <input type="password" id="create-password" name="password" required>
+                    <input type="password" id="create-password" name="password" class="password-input" required placeholder="Create a password">
                     <span class="password-toggle" id="toggle-create-password">
                         <i class="far fa-eye"></i>
                     </span>
                 </div>
+                
                 <div class="form-group password-container">
                     <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm_password" required>
+                    <input type="password" id="confirm-password" name="confirm_password" class="password-input" required placeholder="Confirm your password">
                     <span class="password-toggle" id="toggle-confirm-password">
                         <i class="far fa-eye"></i>
                     </span>
                 </div>
+                
                 <button type="submit" class="submit-btn">Create Account</button>
+                <div class="loading" id="create-loading">
+                    <div class="spinner"></div>
+                    <span>Creating account...</span>
+                </div>
             </form>
         </div>
     </main>
 
-    <script src="login.js"></script>
+    <script>
+        const loginToggle = document.getElementById('login-toggle');
+        const createToggle = document.getElementById('create-toggle');
+        const loginForm = document.getElementById('login-form');
+        const createForm = document.getElementById('create-form');
+        const loginPasswordInput = document.getElementById('login-password');
+        const createPasswordInput = document.getElementById('create-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const toggleLoginPassword = document.getElementById('toggle-login-password');
+        const toggleCreatePassword = document.getElementById('toggle-create-password');
+        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+        const loginLoading = document.getElementById('login-loading');
+        const createLoading = document.getElementById('create-loading');
 
+        // Create message area
+        const messageArea = document.createElement('div');
+        messageArea.className = 'message-area';
+        document.body.appendChild(messageArea);
+
+        const displayMessage = (message, type = 'info') => {
+            console.log('Displaying message:', message, type); // Debug log
+            messageArea.textContent = message;
+            messageArea.className = `message-area ${type}`;
+            messageArea.style.display = 'block';
+            
+            // Auto-hide after 6 seconds
+            setTimeout(() => {
+                messageArea.style.display = 'none';
+            }, 6000);
+        };
+
+        // Function to show loading state
+        const showLoading = (formType, show = true) => {
+            const loadingElement = formType === 'login' ? loginLoading : createLoading;
+            const submitButton = formType === 'login' ? 
+                document.querySelector('#login-form .submit-btn') : 
+                document.querySelector('#create-form .submit-btn');
+            
+            if (show) {
+                loadingElement.style.display = 'block';
+                submitButton.disabled = true;
+                submitButton.textContent = formType === 'login' ? 'Logging in...' : 'Creating...';
+            } else {
+                loadingElement.style.display = 'none';
+                submitButton.disabled = false;
+                submitButton.textContent = formType === 'login' ? 'Login' : 'Create Account';
+            }
+        };
+
+        // Function to toggle password visibility
+        const setupPasswordToggle = (inputElement, toggleElement) => {
+            toggleElement.addEventListener('click', () => {
+                const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+                inputElement.setAttribute('type', type);
+                // Toggle the icon
+                toggleElement.querySelector('i').classList.toggle('fa-eye');
+                toggleElement.querySelector('i').classList.toggle('fa-eye-slash');
+            });
+        };
+
+        setupPasswordToggle(loginPasswordInput, toggleLoginPassword);
+        setupPasswordToggle(createPasswordInput, toggleCreatePassword);
+        setupPasswordToggle(confirmPasswordInput, toggleConfirmPassword);
+
+        // Handle form toggle buttons
+        loginToggle.addEventListener('click', () => {
+            loginToggle.classList.add('active');
+            createToggle.classList.remove('active');
+            loginForm.classList.add('active');
+            createForm.classList.remove('active');
+            messageArea.style.display = 'none';
+        });
+
+        createToggle.addEventListener('click', () => {
+            createToggle.classList.add('active');
+            loginToggle.classList.remove('active');
+            createForm.classList.add('active');
+            loginForm.classList.remove('active');
+            messageArea.style.display = 'none';
+        });
+
+        // Handle Login Form Submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading('login', true);
+            
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            // Basic validation
+            if (!username || !password) {
+                showLoading('login', false);
+                displayMessage('Please fill in all fields.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                showLoading('login', false);
+
+                if (data.success) {
+                    // Save user data to localStorage
+                    localStorage.setItem('userUsername', data.user.username);
+                    localStorage.setItem('userFullName', data.user.full_name);
+                    localStorage.setItem('isAdmin', data.user.is_admin);
+
+                    displayMessage('Login successful! Redirecting...', 'success');
+
+                    // Redirect based on user type
+                    setTimeout(() => {
+                        if (data.user.is_admin) {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    }, 1500);
+                } else {
+                    displayMessage(data.message || 'Login failed. Please check your credentials.', 'error');
+                }
+            } catch (error) {
+                showLoading('login', false);
+                console.error('Login error:', error);
+                displayMessage('Network error. Please check your connection and try again.', 'error');
+            }
+        });
+
+        // Handle Create Account Form Submission
+        createForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading('create', true);
+            
+            // Get ALL form field values
+            const fullName = document.getElementById('create-fullname').value.trim();
+            const contactNumber = document.getElementById('create-contact').value.trim();
+            const email = document.getElementById('create-email').value.trim();
+            const address = document.getElementById('create-address').value.trim();
+            const status = document.getElementById('create-status').value;
+            const username = document.getElementById('create-username').value.trim();
+            const password = document.getElementById('create-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Comprehensive validation
+            if (!fullName) {
+                showLoading('create', false);
+                displayMessage('Full Name is required.', 'error');
+                return;
+            }
+
+            if (!contactNumber) {
+                showLoading('create', false);
+                displayMessage('Contact Number is required.', 'error');
+                return;
+            }
+
+            if (!email) {
+                showLoading('create', false);
+                displayMessage('Email is required.', 'error');
+                return;
+            }
+
+            if (!address) {
+                showLoading('create', false);
+                displayMessage('Address is required.', 'error');
+                return;
+            }
+
+            if (!status) {
+                showLoading('create', false);
+                displayMessage('Status is required. Please select Full Time or Part Time.', 'error');
+                return;
+            }
+
+            if (!username) {
+                showLoading('create', false);
+                displayMessage('Username is required.', 'error');
+                return;
+            }
+
+            if (!password) {
+                showLoading('create', false);
+                displayMessage('Password is required.', 'error');
+                return;
+            }
+
+            if (!confirmPassword) {
+                showLoading('create', false);
+                displayMessage('Please confirm your password.', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showLoading('create', false);
+                displayMessage('Passwords do not match. Please try again.', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showLoading('create', false);
+                displayMessage('Password must be at least 6 characters long.', 'error');
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showLoading('create', false);
+                displayMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            // Contact number validation (basic)
+            const contactRegex = /^[0-9+\-\s()]+$/;
+            if (!contactRegex.test(contactNumber)) {
+                showLoading('create', false);
+                displayMessage('Please enter a valid contact number.', 'error');
+                return;
+            }
+
+            // Username validation
+            if (username.length < 3) {
+                showLoading('create', false);
+                displayMessage('Username must be at least 3 characters long.', 'error');
+                return;
+            }
+
+            try {
+                console.log('Sending registration request...'); // Debug log
+                const response = await fetch('http://127.0.0.1:5000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password,
+                        fullName: fullName,
+                        email: email,
+                        contact: contactNumber,
+                        address: address,
+                        status: status,
+                        isAdmin: username === 'admin' // Simple admin check
+                    })
+                });
+
+                console.log('Response status:', response.status); // Debug log
+                const data = await response.json();
+                console.log('Response data:', data); // Debug log
+
+                showLoading('create', false);
+
+                if (data.success) {
+                    displayMessage('🎉 Account created successfully! Please log in with your new credentials.', 'success');
+                    // Clear the form
+                    createForm.reset();
+                    // Switch to login form after a short delay
+                    setTimeout(() => {
+                        loginToggle.click();
+                        displayMessage('You can now log in with your new account!', 'info');
+                    }, 2000);
+                } else {
+                    displayMessage(data.message || 'Registration failed. Please try again.', 'error');
+                }
+            } catch (error) {
+                showLoading('create', false);
+                console.error('Registration error:', error);
+                displayMessage('Network error. Please check that the server is running and try again.', 'error');
+            }
+        });
+
+        // Test notification on page load
+        setTimeout(() => {
+            displayMessage('Welcome to EduWatch! Please login or create an account.', 'info');
+        }, 1000);
+    </script>
 </body>
 
 </html>

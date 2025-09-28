@@ -4,15 +4,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Profile - EduWatch</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="profile.css">
-    <link rel="icon" href="EduWatch Logo.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Profile - EduWatch</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #5e1414, #8b1e1e);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Header styles */
+        header {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #cccccc;
+        }
+
+        /* Profile CSS */
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .profile-card {
+            background-color: rgba(68, 12, 12, 0.3);
+            padding: 30px;
+            border-radius: 10px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profile-photo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .profile-photo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 2px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        #full-name {
+            font-size: 2rem;
+            margin: 0;
+        }
+
+        .profile-username {
+            font-size: 1rem;
+            color: #a7a7a7;
+            margin-top: 5px;
+        }
+
+        .last-login-text {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin: 10px 0 20px 0;
+        }
+
+        .profile-details {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            position: relative;
+        }
+
+        .detail-item label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .editable-input {
+            background: none;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 5px 0;
+            font-size: 1rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .editable-input:focus {
+            outline: none;
+            border-bottom: 1px solid white;
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .edit-btn {
+            background-color: white;
+            color: #5e1414;
+        }
+
+        .edit-btn:hover {
+            background-color: #cccccc;
+        }
+
+        .save-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #45a049;
+        }
+
+        .logout-btn {
+            background-color: rgba(68, 12, 12, 0.1);
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background-color: #da190b;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: rgba(68, 12, 12, 0.9);
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: white;
+            margin: 0;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #a7a7a7;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .cancel-btn {
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-btn:hover {
+            background-color: #5a6268;
+        }
+
+        /* Message area styles */
+        .message-area {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 1001;
+            display: none;
+            max-width: 300px;
+        }
+
+        .message-area.success {
+            background-color: #4CAF50;
+        }
+
+        .message-area.error {
+            background-color: #f44336;
+        }
+
+        .message-area.info {
+            background-color: #2196F3;
+        }
+    </style>
 </head>
 
 <body>
-
     <header>
         <nav>
             <div class="logo">
@@ -20,11 +329,8 @@
                     <img src="EduWatch Logo.png" alt="EduWatch Logo">
                 </a>
             </div>
-            <div class="nav-links">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="About.html">About Us</a>
-                <a href="FAQ.html">FAQ</a>
-                <a href="profile.html">Profile</a>
+            <div class="nav-links" id="nav-links">
+                <!-- Navigation will be populated by JavaScript based on user role -->
             </div>
         </nav>
     </header>
@@ -33,47 +339,346 @@
         <div class="profile-card" id="profile-card">
             <div class="profile-photo-section">
                 <div class="profile-photo-placeholder">
-                    <img class="profile-image" src="paul.jpg" alt="paul">
+                    <span id="avatar-initials">UN</span>
                 </div>
-                <h2 id="full-name" class="editable-field"></h2>
-                <p id="username" class="profile-username"></p>
-                <p class="last-login-text">Last Logged In: <span id="last-login-info"></span></p>
+                <h2 id="full-name">Loading...</h2>
+                <p class="profile-username" id="profile-username">Loading...</p>
+                <p class="last-login-text">Last Login: <span id="profile-last-login">N/A</span></p>
             </div>
 
             <div class="profile-details">
                 <div class="detail-item">
-                    <label>Email Address</label>
-                    <input type="email" id="email" class="editable-input" readonly>
+                    <label for="profile-role">Role:</label>
+                    <input type="text" id="profile-role" class="editable-input" value="Loading..." readonly>
                 </div>
-                <div class="detail-item password-container">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" class="editable-input password-input" readonly>
-                    <span class="password-toggle" id="toggle-password">
-                        <i class="far fa-eye"></i>
-                    </span>
-                </div>
+
                 <div class="detail-item">
-                    <label>Contact Number</label>
-                    <input type="tel" id="contact" class="editable-input" readonly>
+                    <label for="profile-email">Email:</label>
+                    <input type="email" id="profile-email" class="editable-input" placeholder="Loading..." readonly>
                 </div>
+
                 <div class="detail-item">
-                    <label>Address</label>
-                    <input type="text" id="address" class="editable-input" readonly>
+                    <label for="profile-contact">Contact Number:</label>
+                    <input type="tel" id="profile-contact" class="editable-input" placeholder="Loading..." readonly>
+                </div>
+
+                <div class="detail-item">
+                    <label for="profile-address">Address:</label>
+                    <input type="text" id="profile-address" class="editable-input" placeholder="Loading..." readonly>
                 </div>
             </div>
 
             <div class="button-group">
-                <button id="edit-button" class="action-btn edit-btn">Edit Information</button>
-                <button id="save-button" class="action-btn save-btn" style="display: none;">Save Changes</button>
-                <button id="logout-button" class="action-btn logout-btn">Log Out</button>
+                <button id="edit-profile-btn" class="action-btn edit-btn">Edit Profile</button>
+                <button id="logout-btn" class="action-btn logout-btn">Logout</button>
             </div>
+        </div>
 
-            <p id="message-status" class="status-message"></p>
+        <!-- Edit Profile Modal -->
+        <div id="edit-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Edit Profile</h2>
+                    <span class="close">&times;</span>
+                </div>
+                <form id="edit-profile-form">
+                    <div class="form-group">
+                        <label for="edit-fullname">Full Name:</label>
+                        <input type="text" id="edit-fullname" name="fullname" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-username">Username:</label>
+                        <input type="text" id="edit-username" name="username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-email">Email:</label>
+                        <input type="email" id="edit-email" name="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-contact">Contact Number:</label>
+                        <input type="tel" id="edit-contact" name="contact">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-address">Address:</label>
+                        <input type="text" id="edit-address" name="address">
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="cancel-btn">Cancel</button>
+                        <button type="submit" class="action-btn save-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </main>
 
-    <script src="profile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get user data from localStorage
+            const userUsername = localStorage.getItem('userUsername');
+            const userFullName = localStorage.getItem('userFullName');
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
 
+            // Set up navigation based on user role
+            const navLinks = document.getElementById('nav-links');
+            if (isAdmin) {
+                // Admin navigation - no Dashboard link, only Admin
+                navLinks.innerHTML = `
+                    <a href="admin.html">Admin</a>
+                    <a href="About.html">About Us</a>
+                    <a href="FAQ.html">FAQ</a>
+                    <a href="profile.html">Profile</a>
+                `;
+            } else {
+                // Regular user navigation
+                navLinks.innerHTML = `
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="About.html">About Us</a>
+                    <a href="FAQ.html">FAQ</a>
+                    <a href="profile.html">Profile</a>
+                `;
+            }
+
+            // Get all profile display elements
+            const fullNameElement = document.getElementById('full-name');
+            const profileUsername = document.getElementById('profile-username');
+            const profileLastLogin = document.getElementById('profile-last-login');
+            const profileRole = document.getElementById('profile-role');
+            const profileEmail = document.getElementById('profile-email');
+            const profileContact = document.getElementById('profile-contact');
+            const profileAddress = document.getElementById('profile-address');
+            const avatarInitials = document.getElementById('avatar-initials');
+            const editProfileBtn = document.getElementById('edit-profile-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            // Modal elements
+            const editModal = document.getElementById('edit-modal');
+            const closeModal = document.querySelector('.close');
+            const cancelBtn = document.querySelector('.cancel-btn');
+            const editProfileForm = document.getElementById('edit-profile-form');
+            const editFullName = document.getElementById('edit-fullname');
+            const editUsername = document.getElementById('edit-username');
+            const editEmail = document.getElementById('edit-email');
+            const editContact = document.getElementById('edit-contact');
+            const editAddress = document.getElementById('edit-address');
+
+            // Create a message area for user feedback
+            const messageArea = document.createElement('div');
+            messageArea.className = 'message-area';
+            document.body.appendChild(messageArea);
+
+            const displayMessage = (message, type = 'info') => {
+                messageArea.textContent = message;
+                messageArea.className = `message-area ${type}`;
+                messageArea.style.display = 'block';
+                setTimeout(() => {
+                    messageArea.style.display = 'none';
+                }, 5000);
+            };
+
+            console.log('User data from localStorage:', { userUsername, userFullName, isAdmin });
+
+            // Redirect if not logged in
+            if (!userUsername) {
+                displayMessage('Please log in to view your profile.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+
+            // Load user profile data from API
+            const loadProfileData = async () => {
+                try {
+                    console.log('Fetching profile data for:', userUsername);
+                    const response = await fetch(`http://127.0.0.1:5000/api/profile/${userUsername}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('API Response:', data);
+                        
+                        if (data.success) {
+                            const user = data.user;
+                            console.log('Loaded user data from API:', user);
+                            
+                            // Update localStorage with fresh data
+                            localStorage.setItem('userFullName', user.full_name);
+                            localStorage.setItem('isAdmin', user.is_admin);
+                            
+                            // Update profile display
+                            fullNameElement.textContent = user.full_name || 'Unknown User';
+                            profileUsername.textContent = '@' + (user.username || 'Unknown');
+                            profileRole.value = user.is_admin ? 'Administrator' : 'Faculty';
+                            profileEmail.value = user.email || '';
+                            profileContact.value = user.contact_number || '';
+                            profileAddress.value = user.address || '';
+                            
+                            // Set last login
+                            profileLastLogin.textContent = 'Today';
+                            
+                            // Generate initials for avatar
+                            const initials = user.full_name 
+                                ? user.full_name.split(' ').map(name => name.charAt(0)).join('').toUpperCase().slice(0, 2)
+                                : user.username.substring(0, 2).toUpperCase();
+                            avatarInitials.textContent = initials;
+                            
+                            displayMessage('Profile loaded successfully!', 'success');
+                        } else {
+                            throw new Error(data.message || 'Failed to load profile');
+                        }
+                    } else {
+                        throw new Error(`HTTP Error: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Error loading profile data:', error);
+                    
+                    // Fallback to localStorage data if API fails
+                    if (userFullName && userUsername) {
+                        fullNameElement.textContent = userFullName;
+                        profileUsername.textContent = '@' + userUsername;
+                        profileRole.value = isAdmin ? 'Administrator' : 'Faculty';
+                        profileEmail.value = '';
+                        profileContact.value = '';
+                        profileAddress.value = '';
+                        profileLastLogin.textContent = 'N/A';
+                        
+                        const initials = userFullName 
+                            ? userFullName.split(' ').map(name => name.charAt(0)).join('').toUpperCase().slice(0, 2)
+                            : userUsername.substring(0, 2).toUpperCase();
+                        avatarInitials.textContent = initials;
+                        
+                        displayMessage('Using cached profile data (API connection failed)', 'info');
+                    } else {
+                        displayMessage('Error loading profile data', 'error');
+                    }
+                }
+            };
+
+            // Open edit modal
+            const openEditModal = () => {
+                editFullName.value = fullNameElement.textContent !== 'Unknown User' ? fullNameElement.textContent : '';
+                editUsername.value = userUsername;
+                editEmail.value = profileEmail.value || '';
+                editContact.value = profileContact.value || '';
+                editAddress.value = profileAddress.value || '';
+                editModal.style.display = 'block';
+            };
+
+            // Close edit modal
+            const closeEditModal = () => {
+                editModal.style.display = 'none';
+                editProfileForm.reset();
+            };
+
+            // Handle profile update with REAL API call
+            const handleProfileUpdate = async (e) => {
+                e.preventDefault();
+                
+                const newFullName = editFullName.value.trim();
+                const newUsername = editUsername.value.trim();
+                const newEmail = editEmail.value.trim();
+                const newContact = editContact.value.trim();
+                const newAddress = editAddress.value.trim();
+
+                if (!newFullName || !newUsername) {
+                    displayMessage('Please fill in required fields (Full Name and Username).', 'error');
+                    return;
+                }
+
+                try {
+                    console.log('Updating profile with data:', {
+                        currentUsername: userUsername,
+                        newUsername: newUsername,
+                        fullName: newFullName,
+                        email: newEmail,
+                        contact: newContact,
+                        address: newAddress
+                    });
+
+                    const response = await fetch('http://127.0.0.1:5000/api/profile/update', {
+                        method: 'PUT',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            currentUsername: userUsername,
+                            newUsername: newUsername,
+                            fullName: newFullName,
+                            email: newEmail,
+                            contact: newContact,
+                            address: newAddress
+                        })
+                    });
+
+                    console.log('Update response status:', response.status);
+                    const data = await response.json();
+                    console.log('Update response data:', data);
+
+                    if (data.success) {
+                        // Update localStorage with new data
+                        localStorage.setItem('userUsername', newUsername);
+                        localStorage.setItem('userFullName', newFullName);
+                        
+                        // Reload profile data from API to show updated info
+                        await loadProfileData();
+                        closeEditModal();
+                        displayMessage('Profile updated successfully!', 'success');
+                        
+                        // If username changed, redirect to reload page with new username
+                        if (newUsername !== userUsername) {
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        }
+                    } else {
+                        displayMessage(data.message || 'Failed to update profile.', 'error');
+                    }
+                } catch (error) {
+                    console.error('Profile update error:', error);
+                    displayMessage('An error occurred while updating profile. Please check your connection.', 'error');
+                }
+            };
+
+            // Handle logout
+            const handleLogout = () => {
+                const confirmLogout = window.confirm('Are you sure you want to logout?');
+                if (confirmLogout) {
+                    // Clear all user data from localStorage
+                    localStorage.removeItem('userUsername');
+                    localStorage.removeItem('userFullName');
+                    localStorage.removeItem('isAdmin');
+                    
+                    displayMessage('Logged out successfully. Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                }
+            };
+
+            // Event listeners
+            editProfileBtn.addEventListener('click', openEditModal);
+            logoutBtn.addEventListener('click', handleLogout);
+            closeModal.addEventListener('click', closeEditModal);
+            cancelBtn.addEventListener('click', closeEditModal);
+            editProfileForm.addEventListener('submit', handleProfileUpdate);
+
+            // Close modal when clicking outside of it
+            window.addEventListener('click', (e) => {
+                if (e.target === editModal) {
+                    closeEditModal();
+                }
+            });
+
+            // Load initial profile data from API
+            loadProfileData();
+        });
+    </script>
+    <script src="navigation.js"></script>
 </body>
 
 </html>
