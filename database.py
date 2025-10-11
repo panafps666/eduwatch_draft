@@ -46,13 +46,29 @@ def init_database():
             )
         ''')
         
-        # Create departments table (renamed to subjects for consistency)
+        # Create subjects table WITHOUT time fields
         conn.execute('''
             CREATE TABLE IF NOT EXISTS subjects (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT UNIQUE NOT NULL,
                 description TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+
+# Create schedules table
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS schedules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            subject_id INTEGER NOT NULL,
+            day_of_week TEXT NOT NULL,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+            FOREIGN KEY (subject_id) REFERENCES subjects (id) ON DELETE CASCADE,
+            UNIQUE(user_id, subject_id, day_of_week, start_time)
             )
         ''')
         
@@ -149,81 +165,17 @@ def create_default_subjects(conn):
         
     except sqlite3.Error as e:
         print(f"Error creating IT/CS subjects: {e}")
-        
-    except sqlite3.Error as e:
-        print(f"Error creating default subjects: {e}")
-
-def migrate_json_data():
-    """Migrate existing JSON data to SQLite (optional)."""
-    import json
-    import os
-    
-    if not os.path.exists('db.json'):
-        print("No JSON file found to migrate.")
-        return
-    
-    try:
-        with open('db.json', 'r') as f:
-            data = json.load(f)
-        
-        conn = get_db_connection()
-        
-        # Migrate users
-        users_data = data.get('users', {})
-        for username, user_info in users_data.items():
-            # Check if user already exists
-            exists = conn.execute(
-                "SELECT id FROM users WHERE username = ?", (username,)
-            ).fetchone()
-            
-            if not exists:
-                conn.execute('''
-                    INSERT INTO users (username, password, full_name, status, is_admin)
-                    VALUES (?, ?, ?, ?, ?)
-                ''', (
-                    username,
-                    user_info['password'],  # Already hashed in JSON
-                    user_info['full_name'],
-                    "Full Time",  # Default status for migrated users
-                    user_info['is_admin']
-                ))
-        
-        # Migrate attendance records
-        attendance_data = data.get('attendance_records', [])
-        for record in attendance_data:
-            conn.execute('''
-                INSERT INTO attendance_records (full_name, subject, status, timestamp)
-                VALUES (?, ?, ?, ?)
-            ''', (
-                record['name'],
-                record.get('subject', record.get('department', 'General')),  # Use subject if available, fallback to department
-                record['status'],
-                record['timestamp']
-            ))
-        
-        conn.commit()
-        conn.close()
-        
-        # Backup the JSON file
-        os.rename('db.json', 'db.json.backup')
-        print("JSON data migrated successfully! JSON file backed up as db.json.backup")
-        
-    except Exception as e:
-        print(f"Error migrating JSON data: {e}")
 
 def add_subject_column_to_existing_db():
     """Add subject column to existing attendance_records table if it doesn't exist."""
     conn = get_db_connection()
     try:
-        # Check if subject column exists in attendance_records
         cursor = conn.execute("PRAGMA table_info(attendance_records)")
         columns = [column[1] for column in cursor.fetchall()]
         
         if 'subject' not in columns and 'department' in columns:
             print("Migrating department column to subject column...")
-            # Add subject column
             conn.execute('ALTER TABLE attendance_records ADD COLUMN subject TEXT')
-            # Copy data from department column to subject column
             conn.execute('UPDATE attendance_records SET subject = department WHERE subject IS NULL')
             conn.commit()
             print("Subject column added and data migrated successfully!")
@@ -236,7 +188,6 @@ def add_subject_column_to_existing_db():
         else:
             print("Subject column already exists in attendance_records.")
             
-        # Check if subjects table exists, if not create it
         cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='subjects';")
         if not cursor.fetchone():
             print("Creating subjects table...")
@@ -263,14 +214,12 @@ def clean_duplicate_columns():
     """Remove duplicate department column if both department and subject exist."""
     conn = get_db_connection()
     try:
-        # Check what columns exist in attendance_records
         cursor = conn.execute("PRAGMA table_info(attendance_records)")
         columns = [column[1] for column in cursor.fetchall()]
         
         if 'department' in columns and 'subject' in columns:
             print("Found both department and subject columns. Cleaning up...")
             
-            # Create new table without department column
             conn.execute('''
                 CREATE TABLE attendance_records_new (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -284,7 +233,6 @@ def clean_duplicate_columns():
                 )
             ''')
             
-            # Copy data from old table to new table, using subject column
             conn.execute('''
                 INSERT INTO attendance_records_new (id, user_id, full_name, subject, status, timestamp, created_at)
                 SELECT id, user_id, full_name, 
@@ -293,7 +241,6 @@ def clean_duplicate_columns():
                 FROM attendance_records
             ''')
             
-            # Drop old table and rename new table
             conn.execute('DROP TABLE attendance_records')
             conn.execute('ALTER TABLE attendance_records_new RENAME TO attendance_records')
             
@@ -311,7 +258,6 @@ def add_status_column_to_existing_db():
     """Add status column to existing users table if it doesn't exist."""
     conn = get_db_connection()
     try:
-        # Check if status column exists
         cursor = conn.execute("PRAGMA table_info(users)")
         columns = [column[1] for column in cursor.fetchall()]
         
@@ -329,13 +275,7 @@ def add_status_column_to_existing_db():
         conn.close()
 
 if __name__ == "__main__":
-    # Initialize database when script is run directly
     init_database()
-    # Add status column if upgrading from older version
     add_status_column_to_existing_db()
-    # Add subject column and subjects table if upgrading from older version
     add_subject_column_to_existing_db()
-    # Clean up duplicate columns (remove department column if both exist)
     clean_duplicate_columns()
-    # Optionally migrate existing JSON data
-    migrate_json_data()

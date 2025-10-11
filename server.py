@@ -134,9 +134,9 @@ def mark_attendance():
     """Endpoint to mark user attendance."""
     data = request.json
     full_name = data.get('full_name')
-    status = data.get('status')
+    status = data.get('status', 'Present')  # Default to Present
     department = data.get('department')
-    subject = data.get('subject')  # New subject field
+    subject = data.get('subject')  # The formatted schedule string
     timestamp = data.get('timestamp')
 
     if not all([full_name, timestamp]):
@@ -145,9 +145,9 @@ def mark_attendance():
     try:
         conn = get_db_connection()
         
-        # Get user ID and status from users table
+        # Get user ID from users table
         user = conn.execute(
-            'SELECT id, status FROM users WHERE full_name = ?', (full_name,)
+            'SELECT id FROM users WHERE full_name = ?', (full_name,)
         ).fetchone()
         
         if not user:
@@ -155,19 +155,15 @@ def mark_attendance():
             return jsonify({'success': False, 'message': 'User not found.'}), 404
         
         user_id = user['id']
-        user_status = user['status']  # Get the actual user status from registration
         
-        # Add subject column if it doesn't exist
-        try:
-            conn.execute('ALTER TABLE attendance_records ADD COLUMN subject TEXT')
-            conn.commit()
-        except sqlite3.Error:
-            pass
+        # Use subject if provided, otherwise use department
+        subject_to_save = subject if subject else department
         
+        # Insert attendance record
         conn.execute('''
-            INSERT INTO attendance_records (user_id, full_name, department, subject, status, timestamp)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (user_id, full_name, department or 'General', subject or department, user_status, timestamp))
+            INSERT INTO attendance_records (user_id, full_name, subject, status, timestamp)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (user_id, full_name, subject_to_save, status, timestamp))
         
         conn.commit()
         conn.close()
@@ -176,7 +172,7 @@ def mark_attendance():
     
     except sqlite3.Error as e:
         print(f"Attendance error: {e}")
-        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
+        return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
 
 @app.route('/api/dashboard', methods=['GET'])
 def get_dashboard_data():
@@ -194,22 +190,24 @@ def get_dashboard_data():
         # Convert to list of dictionaries
         attendance_list = []
         for record in records:
+            # Safely get values with proper key checking
+            record_dict = dict(record)
             attendance_list.append({
-                'id': record['id'],
-                'name': record['full_name'],
-                'department': record['department'],
-                'subject': record['subject'] if 'subject' in record.keys() and record['subject'] else record['department'],
-                'status': record['status'],  # This is the attendance status
-                'user_status': record['user_status'] or 'Unknown',  # This is the user's employment status
-                'timestamp': record['timestamp'],
-                'username': record['username']
+                'id': record_dict.get('id'),
+                'name': record_dict.get('full_name'),
+                'department': record_dict.get('department', 'N/A'),
+                'subject': record_dict.get('subject', record_dict.get('department', 'N/A')),
+                'status': record_dict.get('status', 'Present'),
+                'user_status': record_dict.get('user_status', 'Unknown'),
+                'timestamp': record_dict.get('timestamp'),
+                'username': record_dict.get('username')
             })
         
         return jsonify({'attendance': attendance_list}), 200
     
     except sqlite3.Error as e:
         print(f"Dashboard error: {e}")
-        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
+        return jsonify({'success': False, 'message': 'Database error occurred.', 'attendance': []}), 500
 
 # --- Admin API Endpoints ---
 
@@ -287,7 +285,8 @@ def clear_all_attendance():
         return jsonify({'success': True, 'message': 'All attendance records have been cleared.'}), 200
     
     except sqlite3.Error as e:
-        return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
+        print(f"Clear attendance error: {e}")
+        return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
 
 # --- Subject Management API Endpoints ---
 
@@ -303,33 +302,11 @@ def get_subjects():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT UNIQUE NOT NULL,
                 description TEXT,
+                start_time TEXT,
+                end_time TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-        
-        # Insert default subjects if table is empty
-        count = conn.execute('SELECT COUNT(*) as count FROM subjects').fetchone()['count']
-        if count == 0:
-            default_subjects = [
-                ('Mathematics', 'Mathematics and Algebra'),
-                ('English', 'English Language and Literature'),
-                ('Science', 'General Science'),
-                ('History', 'World and Local History'),
-                ('Computer Science', 'Programming and IT'),
-                ('Physics', 'Physics and Applied Sciences'),
-                ('Chemistry', 'Chemistry and Laboratory Sciences'),
-                ('Biology', 'Biology and Life Sciences'),
-                ('Geography', 'Physical and Human Geography'),
-                ('Literature', 'Literature and Reading'),
-                ('Art', 'Visual Arts and Creative Expression'),
-                ('Music', 'Music Theory and Performance'),
-                ('Physical Education', 'Sports and Physical Fitness'),
-                ('Economics', 'Economics and Business Studies'),
-                ('Psychology', 'Psychology and Human Behavior')
-            ]
-            
-            for name, desc in default_subjects:
-                conn.execute('INSERT INTO subjects (name, description) VALUES (?, ?)', (name, desc))
         
         subjects = conn.execute('SELECT * FROM subjects ORDER BY name').fetchall()
         conn.commit()
@@ -340,7 +317,9 @@ def get_subjects():
             subject_list.append({
                 'id': subject['id'],
                 'name': subject['name'],
-                'description': subject['description']
+                'description': subject['description'],
+                'start_time': subject['start_time'] if 'start_time' in subject.keys() else None,
+                'end_time': subject['end_time'] if 'end_time' in subject.keys() else None
             })
         
         return jsonify({'subjects': subject_list}), 200
@@ -355,13 +334,18 @@ def add_subject():
     data = request.json
     name = data.get('name')
     description = data.get('description', '')
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
     
     if not name:
         return jsonify({'success': False, 'message': 'Subject name is required.'}), 400
     
     try:
         conn = get_db_connection()
-        conn.execute('INSERT INTO subjects (name, description) VALUES (?, ?)', (name, description))
+        conn.execute(
+        'INSERT INTO subjects (name, description) VALUES (?, ?)', 
+        (name, description)
+        )
         conn.commit()
         conn.close()
         
@@ -372,7 +356,7 @@ def add_subject():
     except sqlite3.Error as e:
         print(f"Add subject error: {e}")
         return jsonify({'success': False, 'message': 'Database error occurred.'}), 500
-
+    
 # --- Profile API Endpoints ---
 
 @app.route('/api/profile/update', methods=['PUT'])
@@ -659,7 +643,7 @@ def get_user_available_subjects(user_id):
         if tables:
             # If user has assigned subjects, return only those
             user_subjects = conn.execute('''
-                SELECT s.id, s.name, s.description
+                SELECT s.id, s.name, s.description, s.start_time, s.end_time
                 FROM subjects s
                 JOIN user_subjects us ON s.id = us.subject_id
                 WHERE us.user_id = ?
@@ -672,7 +656,9 @@ def get_user_available_subjects(user_id):
                     subject_list.append({
                         'id': subject['id'],
                         'name': subject['name'],
-                        'description': subject['description']
+                        'description': subject['description'],
+                        'start_time': subject['start_time'] if 'start_time' in subject.keys() else None,
+                        'end_time': subject['end_time'] if 'end_time' in subject.keys() else None
                     })
                 conn.close()
                 return jsonify({'subjects': subject_list}), 200
@@ -682,12 +668,12 @@ def get_user_available_subjects(user_id):
         conn.close()
         
         subject_list = []
-        for subject in all_subjects:
+        for subject in all_subjects:  # ✅ FIXED
             subject_list.append({
-                'id': subject['id'],
-                'name': subject['name'],
-                'description': subject['description']
-            })
+            'id': subject['id'],
+            'name': subject['name'],
+            'description': subject['description']
+        })
         
         return jsonify({'subjects': subject_list}), 200
     
@@ -709,7 +695,120 @@ def not_found(error):
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({'success': False, 'message': 'Internal server error'}), 500
+# --- Schedule Management Endpoints ---
 
+@app.route('/api/admin/users/<int:user_id>/schedules', methods=['GET'])
+def get_user_schedules(user_id):
+    """Get all schedules for a specific user."""
+    try:
+        conn = get_db_connection()
+        schedules = conn.execute('''
+            SELECT 
+                s.id, s.user_id, s.subject_id, s.day_of_week, s.start_time, s.end_time,
+                sub.name as subject_name
+            FROM schedules s
+            JOIN subjects sub ON s.subject_id = sub.id
+            WHERE s.user_id = ?
+            ORDER BY 
+                CASE s.day_of_week
+                    WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3
+                    WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6
+                    ELSE 7 END, s.start_time
+        ''', (user_id,)).fetchall()
+        conn.close()
+        
+        schedule_list = [{
+            'id': s['id'], 'user_id': s['user_id'], 'subject_id': s['subject_id'],
+            'subject_name': s['subject_name'], 'day_of_week': s['day_of_week'],
+            'start_time': s['start_time'], 'end_time': s['end_time']
+        } for s in schedules]
+        
+        return jsonify({'schedules': schedule_list}), 200
+    except sqlite3.Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/admin/users/<int:user_id>/schedules', methods=['POST'])
+def add_user_schedule(user_id):
+    """Add a schedule entry for a user."""
+    data = request.json
+    
+    # Validation
+    if not all(key in data for key in ['subject_id', 'day_of_week', 'start_time', 'end_time']):
+        return jsonify({'success': False, 'message': 'Missing required fields'}), 400
+    
+    try:
+        conn = get_db_connection()
+        
+        # Check if user exists
+        user = conn.execute('SELECT id FROM users WHERE id = ?', (user_id,)).fetchone()
+        if not user:
+            conn.close()
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+        
+        # Check if subject exists
+        subject = conn.execute('SELECT id FROM subjects WHERE id = ?', (data['subject_id'],)).fetchone()
+        if not subject:
+            conn.close()
+            return jsonify({'success': False, 'message': 'Subject not found'}), 404
+        
+        # Insert schedule
+        conn.execute('''
+            INSERT INTO schedules (user_id, subject_id, day_of_week, start_time, end_time)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (user_id, data['subject_id'], data['day_of_week'], data['start_time'], data['end_time']))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': 'Schedule added successfully!'}), 201
+        
+    except sqlite3.IntegrityError as e:
+        print(f"Schedule conflict: {e}")
+        return jsonify({'success': False, 'message': 'This schedule already exists or conflicts with an existing one'}), 409
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
+
+@app.route('/api/admin/schedules/<int:schedule_id>', methods=['DELETE'])
+def delete_schedule(schedule_id):
+    """Delete a schedule entry."""
+    try:
+        conn = get_db_connection()
+        conn.execute('DELETE FROM schedules WHERE id = ?', (schedule_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True}), 200
+    except sqlite3.Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/admin/schedules', methods=['GET'])
+def get_all_schedules():
+    """Get all schedules with user information."""
+    try:
+        conn = get_db_connection()
+        schedules = conn.execute('''
+            SELECT s.*, u.full_name as user_name, u.status as user_status, sub.name as subject_name
+            FROM schedules s
+            JOIN users u ON s.user_id = u.id
+            JOIN subjects sub ON s.subject_id = sub.id
+            ORDER BY u.full_name, CASE s.day_of_week
+                WHEN 'Monday' THEN 1 WHEN 'Tuesday' THEN 2 WHEN 'Wednesday' THEN 3
+                WHEN 'Thursday' THEN 4 WHEN 'Friday' THEN 5 WHEN 'Saturday' THEN 6
+                ELSE 7 END, s.start_time
+        ''').fetchall()
+        conn.close()
+        
+        schedule_list = [{
+            'id': s['id'], 'user_id': s['user_id'], 'user_name': s['user_name'],
+            'user_status': s['user_status'], 'subject_id': s['subject_id'],
+            'subject_name': s['subject_name'], 'day_of_week': s['day_of_week'],
+            'start_time': s['start_time'], 'end_time': s['end_time']
+        } for s in schedules]
+        
+        return jsonify({'schedules': schedule_list}), 200
+    except sqlite3.Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+   
 # Run the Flask app
 if __name__ == '__main__':
     print("Starting EduWatch Server...")
